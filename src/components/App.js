@@ -8,7 +8,7 @@ import Search from './Search';
 import { initialState, reducer } from "../store/reducer";
 import axios from 'axios';
 
-const MOVIE_API_URL = "http://www.omdbapi.com/?i=tt3896198&apikey=56b1c85e"
+const MOVIE_API_URL = "https://www.omdbapi.com/?s=man&apikey=4a3b711b"
 
 const App = () => {
 
@@ -23,16 +23,16 @@ const App = () => {
     });
   }, []);
 
-  const refreshPage = () => {
+  /* const refreshPage = () => {
     window.location.reload();
-  };
+  }; */
   const search = searchValue => {
     dispatch({
       type: "SEARCH_MOVIES_REQUEST"
     })
   
 
-    axios(`http://www.omdbapi.com/?s=${searchValue}&apikey=56b1c85e`).then(
+    axios(`https://www.omdbapi.com/?s=${searchValue}&apikey=4a3b711b`).then(
       jsonResponse => {
         if (jsonResponse.data.Response === "True") {
           dispatch({
