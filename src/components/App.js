@@ -1,50 +1,50 @@
-import React, { useState, useEffect } from 'react';
-import '../App.css';
+import React, { useReducer, useEffect } from "react";
+
 import Header from './Header';
 import Movie from './Movie';
+import spinner from '../assets/ajax-loader.gif';
 import Search from './Search';
+import { initialState, reducer } from "../store/reducer";
+import axios from 'axios';
 
-const MOVIE_API_URL = "http://www.omdbapi.com/?i=tt3896198&apikey=56b1c85e";
+const MOVIE_API_URL = "https://www.omdbapi.com/?i=tt3896198&apikey=56b1c85e"
 
 const App = () => {
 
-  const [loading, setLoading] = useState(true);
-  const [movies, setMovies] = useState([]);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    fetch(MOVIE_API_URL)
-      .then(response => response.json())
-      .then(jsonResponse => {
-        setMovies(jsonResponse.Search);
-        setLoading(false);
+    axios.get(MOVIE_API_URL).then(jsonResponse => {
+      dispatch({
+        type: "SERACH_MOVIE_SUCCESS",
+        payload: jsonResponse.data.Search
       });
+    });
   }, []);
 
-  const search = searchValue => {
-    setLoading(true);
-    setErrorMessage(null);
+  const refreshPage = () => {
+    window.location.reload();
+  };
 
-    fetch(`https://www.omdbapi.com/?s=${searchValue}&apikey=56b1c85e`)
-      .then(response => response.json)
-      .then(jsonResponse => {
-        if (jsonResponse.Response === "true") {
-          setMovies(jsonResponse.Search);
-          setLoading(false);
-        } else {
-          setErrorMessage(jsonResponse.Error);
-          setLoading(false);
-        }
-      })
-  }
+  axios(`https://www.omdbapi.com/?s=${searchValue}&apikey=56b1c85e`).then(
+    jsonResponse => {
+      if (jsonResponse.data.Response === "True") {
+        dispatch({
+          type: "SEARCH_MOVIE_SUCCESS",
+          payload: jsonResponse.data.Search
+        });
+      } else {
+        dispatch({
+          type: "SEARCH_MOVIE_FAILURE",
+          error: jsonResponse.data.Error
+        });
+      }
+    }
+  );
 
   return (
     <div className="App">
-      <Header text="HOOKED" />
-      <Search search={search} />
-      <div className="movies">
-        <h1>Filmes</h1>
-      </div>
+      APP
     </div>
   )
 }
